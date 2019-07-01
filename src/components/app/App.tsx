@@ -1,11 +1,14 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import { PixelCanvas } from '../pixel-canvas';
 
 const App: React.FC = () => {
   return (
     <div className="App">
       <header className="App-header">
+        <PixelCanvas width={480} height={480} />
+      </header>
+      {/* <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
           Edit <code>src/App.tsx</code> and save to reload.
@@ -18,7 +21,8 @@ const App: React.FC = () => {
         >
           Learn React
         </a>
-      </header>
+      </header> */}
+
     </div>
   );
 }
