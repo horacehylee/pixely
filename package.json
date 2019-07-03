@@ -41,6 +41,7 @@
     ]
   },
   "devDependencies": {
+    "coveralls": "^3.0.4",
     "cross-env": "^5.2.0",
     "gh-pages": "^2.0.1",
     "jest-canvas-mock": "^2.1.0"

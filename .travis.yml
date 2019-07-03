@@ -1,0 +1,19 @@
+language: node_js
+node_js:
+  - 'node' # use latest stable nodejs version
+cache:
+  directories:
+  - node_modules
+script:
+  - npm run test:ci # jest test with coverage flag does coverage too
+  - npm run build
+after_script:
+  - 'cat coverage/lcov.info | ./node_modules/.bin/coveralls' # sends the coverage report to coveralls
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN
+  keep_history: true
+  local_dir: build
+  on:
+    branch: master
