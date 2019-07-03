@@ -19,12 +19,12 @@ export const PencilTool: React.FC = () => {
   };
 
   // zoom
-  const zoom = useStoreState<StoreModel>(state => state.tool.zoom);
+  const zoom = useStoreState<StoreModel>(state => state.canvas.zoom);
   const increaseZoom = useStoreActions<StoreModel>(
-    actions => actions.tool.increaseZoom
+    actions => actions.canvas.increaseZoom
   );
   const decreaseZoom = useStoreActions<StoreModel>(
-    actions => actions.tool.decreaseZoom
+    actions => actions.canvas.decreaseZoom
   );
 
   const handleIncreaseZoomClick =() => {

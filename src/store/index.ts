@@ -36,24 +36,30 @@ const defaultPaletteModel: PaletteModel = {
 type ToolType = "pencil" | "eraser" | "fill" | "pan" | "eyedropper";
 interface ToolModel {
   selected: ToolType;
-  zoom: number;
   brushSize: number;
 
   increaseBrushSize: Action<ToolModel, number>;
   decreaseBrushSize: Action<ToolModel, number>;
-  increaseZoom: Action<ToolModel, number>;
-  decreaseZoom: Action<ToolModel, number>;
 }
 const defaultToolModel: ToolModel = {
   selected: "pencil",
-  zoom: 30,
   brushSize: 1,
   increaseBrushSize: action((state, payload) => {
     state.brushSize = Math.max(1, state.brushSize + payload);
   }),
   decreaseBrushSize: action((state, payload) => {
     state.brushSize = Math.max(1, state.brushSize - payload);
-  }),
+  })
+};
+
+interface CanvasModel {
+  zoom: number;
+
+  increaseZoom: Action<CanvasModel, number>;
+  decreaseZoom: Action<CanvasModel, number>;
+}
+const defaultCanvasModel: CanvasModel = {
+  zoom: 30,
   increaseZoom: action((state, payload) => {
     state.zoom = Math.min(100, state.zoom + payload);
   }),
@@ -68,11 +74,13 @@ const defaultToolModel: ToolModel = {
 export type StoreModel = {
   palette: PaletteModel;
   tool: ToolModel;
+  canvas: CanvasModel;
 };
 
 export const storeModel: StoreModel = {
   palette: defaultPaletteModel,
-  tool: defaultToolModel
+  tool: defaultToolModel,
+  canvas: defaultCanvasModel
 };
 
 export const store = createStore(storeModel);

@@ -23,7 +23,7 @@ export const PixelCanvas: React.FC<PixelCanvasProps> = props => {
     state => state.palette.selectedColor
   );
   const brushSize = useStoreState<StoreModel>(state => state.tool.brushSize);
-  const zoom = useStoreState<StoreModel>(state => state.tool.zoom);
+  const zoom = useStoreState<StoreModel>(state => state.canvas.zoom);
 
   const getCanvasContext = (): CanvasContext => {
     return Object.freeze({
