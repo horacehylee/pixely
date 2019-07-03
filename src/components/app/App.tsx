@@ -1,12 +1,14 @@
 import React from 'react';
 import './App.css';
 import { PixelCanvas } from '../pixel-canvas';
+import { ColorPalette } from '../color-palette/ColorPalette';
 
 const App: React.FC = () => {
   return (
     <div className="App">
       <header className="App-header">
-        <PixelCanvas width={480} height={480} />
+        <ColorPalette />
+        <PixelCanvas width={20} height={20} zoom={30}/>
       </header>
       {/* <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />

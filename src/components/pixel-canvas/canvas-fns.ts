@@ -4,58 +4,109 @@ export interface CanvasContext {
   ctx: CanvasRenderingContext2D;
   width: number;
   height: number;
-  cellSize: number;
+  brushSize: number;
 }
 
-export const clear = (
-  { ctx, width, height }: CanvasContext,
-  defaultColor: Color
-) => {
-  ctx.beginPath();
-  ctx.rect(0, 0, width, height);
-  ctx.fillStyle = defaultColor;
-  ctx.fill();
-  ctx.closePath();
+export const clear = ({ ctx, width, height }: CanvasContext) => {
+  // ctx.clearRect(0, 0, width, height);
+  ctx.fillStyle = "white"; // TODO use clearRect
+  ctx.fillRect(0, 0, width, height);
 };
 
-export const drawGrid = ({ ctx, width, height, cellSize }: CanvasContext) => {
-  ctx.lineWidth = 0.5;
-  ctx.setTransform(1, 0, 0, 1, 0, 0); //reset transform
-  ctx.translate(0.5, 0.5); //make lines sharp
-  for (var i = 0; i <= width; i += cellSize) {
-    //draw vertical line HEIGHT length, x=i
-    ctx.beginPath();
-    ctx.moveTo(i, 0);
-    ctx.lineTo(i, height);
-    ctx.stroke();
-    ctx.closePath();
-    //draw horizontal line WIDTH length, y=i
-    ctx.beginPath();
-    ctx.moveTo(0, i);
-    ctx.lineTo(width, i);
-    ctx.stroke();
-    ctx.closePath();
+export const withinBound = (
+  { width, height }: CanvasContext,
+  { x, y }: { x: number; y: number }
+) => {
+  if (x < 0 || x >= width || y < 0 || y >= height) {
+    return false;
   }
-  ctx.lineWidth = 0;
+  return true;
 };
 
 export const setColor = (
-  { ctx, width, height, cellSize }: CanvasContext,
+  canvasContext: CanvasContext,
   { x, y, color }: { x: number; y: number; color: Color }
 ) => {
-  // bound check
-  if (x <= 0 || x >= width || y <= 0 || y >= height) {
+  const { ctx, brushSize } = canvasContext;
+  if (!withinBound(canvasContext, { x, y })) {
     return;
   }
 
-  // convert coordinates into column and row index
-  const col = Math.floor(x / cellSize);
-  const row = Math.floor(y / cellSize);
-
   // canvas logic to fill that rect
   ctx.fillStyle = color;
-  ctx.clearRect(col * cellSize, row * cellSize, cellSize, cellSize);
-  ctx.beginPath();
-  ctx.fillRect(col * cellSize, row * cellSize, cellSize, cellSize);
-  ctx.closePath();
+  ctx.fillRect(
+    x - Math.floor(brushSize / 2),
+    y - Math.floor(brushSize / 2),
+    brushSize,
+    brushSize
+  );
+};
+
+export const line = (
+  canvasContext: CanvasContext,
+  {
+    x0,
+    y0,
+    x1,
+    y1,
+    color
+  }: {
+    x0: number;
+    y0: number;
+    x1: number;
+    y1: number;
+    color: string;
+  }
+) => {
+  const { ctx, width, height, brushSize } = canvasContext;
+  const xClamp = clamp({
+    min: 0,
+    max: width - 1
+  });
+  const yClamp = clamp({
+    min: 0,
+    max: height - 1
+  });
+
+  x0 = xClamp(x0);
+  y0 = yClamp(y0);
+  x1 = xClamp(x1);
+  y1 = yClamp(y1);
+
+  const dx = Math.abs(x1 - x0);
+  const dy = Math.abs(y1 - y0);
+  const sx = x0 < x1 ? 1 : -1;
+  const sy = y0 < y1 ? 1 : -1;
+  let err = dx - dy;
+
+  while (true) {
+    //set pixel
+    ctx.fillStyle = color;
+    ctx.fillRect(
+      x0 - Math.floor(brushSize / 2),
+      y0 - Math.floor(brushSize / 2),
+      brushSize,
+      brushSize
+    );
+
+    //if we've reached the end goal, exit the loop
+    if (x0 === x1 && y0 === y1) {
+      break;
+    }
+    const e2 = 2 * err;
+    if (e2 > -dy) {
+      err -= dy;
+      x0 += sx;
+    }
+    if (e2 < dx) {
+      err += dx;
+      y0 += sy;
+    }
+  }
+};
+
+const clamp = ({ min, max }: { min: number; max: number }) => (
+  value: number
+) => {
+  return Math.min(Math.max(value, min), max);
 };
