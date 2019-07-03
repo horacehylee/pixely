@@ -5,42 +5,46 @@ import { useStoreState } from "easy-peasy";
 import { StoreModel } from "../../store";
 import { PureCanvas } from "./PureCanvas";
 import { useGesture } from "react-use-gesture";
+import { useSpring } from "react-spring";
 
 type PixelCanvasProps = {
   width: number;
   height: number;
 } & Partial<PixelCanvasDefaultProps>;
 
-const defaultProps = {
-  zoom: 1,
-  brushSize: 1
-};
+const defaultProps = {};
 type PixelCanvasDefaultProps = Readonly<typeof defaultProps>;
 const getProps = createPropGetter(defaultProps);
 
 export const PixelCanvas: React.FC<PixelCanvasProps> = props => {
-  const { width, height, zoom, brushSize } = getProps(props);
+  const { width, height } = getProps(props);
 
-  const selectedColor = useStoreState<StoreModel, string>(
-    state => state.palette.selected
+  const selectedColor = useStoreState<StoreModel>(
+    state => state.palette.selectedColor
   );
+  const brushSize = useStoreState<StoreModel>(state => state.tool.brushSize);
+  const zoom = useStoreState<StoreModel>(state => state.tool.zoom);
 
-  const getCanvasContext = useCallback((): CanvasContext => {
+  const getCanvasContext = (): CanvasContext => {
     return Object.freeze({
       ctx: canvasRef.current!.getContext("2d")!,
       width,
       height,
       brushSize
     } as CanvasContext);
-  }, [height, width, brushSize]);
+  };
 
+  // canvas setup
   useEffect(() => {
     const canvasContext = getCanvasContext();
     canvasContext.ctx.imageSmoothingEnabled = true;
 
     clear(canvasContext);
-  }, [getCanvasContext]);
 
+    // eslint-disable-next-line
+  }, []);
+
+  // canvas ref callback
   const canvasRef = useRef<HTMLCanvasElement>();
   const canvasRefCallback = useCallback(node => {
     if (node !== null) {
@@ -48,6 +52,7 @@ export const PixelCanvas: React.FC<PixelCanvasProps> = props => {
     }
   }, []);
 
+  // gesture for canvas
   const bindGesture = useGesture({
     onDrag: state => {
       const [x0, y0] = state.previous;
@@ -82,12 +87,26 @@ export const PixelCanvas: React.FC<PixelCanvasProps> = props => {
     }
   });
 
+  const [animatedProps, setAnimatedProps] = useSpring(() => {
+    return {
+      width: zoom * width,
+      height: zoom * height
+    };
+  });
+  useEffect(() => {
+    setAnimatedProps({
+      width: zoom * width,
+      height: zoom * height
+    });
+  }, [width, height, zoom, setAnimatedProps]);
+
   return (
     <PureCanvas
       canvasRefCallback={canvasRefCallback}
       width={width}
       height={height}
       bindGesture={bindGesture}
+      animatedProps={animatedProps}
     />
     // Background Canvas
   );
