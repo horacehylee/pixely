@@ -1,0 +1,32 @@
+image: node:12.4.0
+
+stages:
+  - build
+  - test
+  - deploy
+
+build:
+  stage: build
+  script:
+    - npm config set maxsockets 5
+    - npm install
+    - npm test:ci
+
+# deploy:
+#   stage: deploy
+#   script:
+#     - git config user.email "horacehylee2@gmail.com"
+#     - git config --global user.name "Horace Lee"
+
+#     - apt-get update -qy
+#     - apt-get install -y ruby-dev
+#     - gem install dpl
+#     - cd finance-mgmt-client
+#     - dpl --provider=heroku --app=finance-mgmt-frontent --api-key=$HEROKU_API_KEY
+#   dependencies: []
+#   artifacts:
+#     paths:
+#     - build
+#   only:
+#     - master
+#     - develop
