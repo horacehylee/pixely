@@ -10,7 +10,7 @@ const App: React.FC = () => {
       <header className="App-header">
         <ColorPalette />
         <PencilTool/>
-        <PixelCanvas width={20} height={20} />
+        <PixelCanvas />
       </header>
     </div>
   );

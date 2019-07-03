@@ -53,12 +53,16 @@ const defaultToolModel: ToolModel = {
 };
 
 interface CanvasModel {
+  width: number;
+  height: number;
   zoom: number;
 
   increaseZoom: Action<CanvasModel, number>;
   decreaseZoom: Action<CanvasModel, number>;
 }
 const defaultCanvasModel: CanvasModel = {
+  width: 20,
+  height: 20,
   zoom: 30,
   increaseZoom: action((state, payload) => {
     state.zoom = Math.min(100, state.zoom + payload);

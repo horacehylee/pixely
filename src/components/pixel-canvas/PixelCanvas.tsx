@@ -1,5 +1,4 @@
 import React, { useRef, useEffect, useCallback } from "react";
-import { createPropGetter } from "../../createPropGetter";
 import { CanvasContext, clear, line, withinBound } from "./canvas-fns";
 import { useStoreState } from "easy-peasy";
 import { StoreModel } from "../../store";
@@ -7,23 +6,16 @@ import { PureCanvas } from "./PureCanvas";
 import { useGesture } from "react-use-gesture";
 import { useSpring } from "react-spring";
 
-type PixelCanvasProps = {
-  width: number;
-  height: number;
-} & Partial<PixelCanvasDefaultProps>;
+type Props = {};
 
-const defaultProps = {};
-type PixelCanvasDefaultProps = Readonly<typeof defaultProps>;
-const getProps = createPropGetter(defaultProps);
-
-export const PixelCanvas: React.FC<PixelCanvasProps> = props => {
-  const { width, height } = getProps(props);
-
+export const PixelCanvas: React.FC<Props> = () => {
   const selectedColor = useStoreState<StoreModel>(
     state => state.palette.selectedColor
   );
   const brushSize = useStoreState<StoreModel>(state => state.tool.brushSize);
   const zoom = useStoreState<StoreModel>(state => state.canvas.zoom);
+  const width = useStoreState<StoreModel>(state => state.canvas.width);
+  const height = useStoreState<StoreModel>(state => state.canvas.height);
 
   const getCanvasContext = (): CanvasContext => {
     return Object.freeze({
@@ -87,6 +79,7 @@ export const PixelCanvas: React.FC<PixelCanvasProps> = props => {
     }
   });
 
+  // animation
   const [animatedProps, setAnimatedProps] = useSpring(() => {
     return {
       width: zoom * width,
@@ -111,5 +104,3 @@ export const PixelCanvas: React.FC<PixelCanvasProps> = props => {
     // Background Canvas
   );
 };
-
-PixelCanvas.defaultProps = defaultProps;
