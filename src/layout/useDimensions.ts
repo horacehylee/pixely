@@ -64,7 +64,7 @@ export function useDimensions({
         };
       }
     }
-  }, [node]);
+  }, [node, liveMeasure]);
 
   return [ref, dimensions!, node];
 }

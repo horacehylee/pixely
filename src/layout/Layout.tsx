@@ -92,28 +92,3 @@ export const Layout: React.FC<Props> = ({ top, left, middle, right }) => {
     </>
   );
 };
-
-{
-  /* <div
-          style={{
-            bottom: "0px",
-            left: "64px",
-            right: "48px",
-            top: "48px",
-            position: "fixed",
-            display: "block"
-          }}
-        >
-          <div
-            ref={ref}
-            style={{
-              backgroundColor: "#1E1E1E",
-              width: "100%",
-              height: "100%",
-              boxShadow: "inset 0px 0px 5px 0px rgba(0, 0, 0, 0.4)"
-            }}
-          >
-            {middle}
-          </div>
-        </div> */
-}
