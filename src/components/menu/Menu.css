@@ -1,0 +1,19 @@
+.Menu-items {
+  padding: 0px 16px;
+  min-width: 48px;
+  height: 100%;
+}
+
+.Menu-button {
+  color: #adadad;
+  height: 100%;
+  padding: 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.Menu-button:hover {
+  background: #474748;
+  color: #b3b3b3;
+}

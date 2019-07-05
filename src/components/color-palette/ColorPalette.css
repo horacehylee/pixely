@@ -1,0 +1,17 @@
+.ColorPalette-items {
+  width: 100%;
+}
+
+.ColorPalette-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.ColorPalette-button path {
+  fill: #adadad;
+}
+
+.ColorPalette-button:hover path {
+  fill: #fff;
+}
