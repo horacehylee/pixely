@@ -23,7 +23,8 @@
     "test:ci": "cross-env CI=true npm test -- --coverage",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "deploy": "gh-pages -d build",
+    "analyze": "source-map-explorer 'build/static/js/*.js'"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -44,6 +45,7 @@
     "coveralls": "^3.0.4",
     "cross-env": "^5.2.0",
     "gh-pages": "^2.0.1",
-    "jest-canvas-mock": "^2.1.0"
+    "jest-canvas-mock": "^2.1.0",
+    "source-map-explorer": "^2.0.1"
   }
 }

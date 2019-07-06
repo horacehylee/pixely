@@ -2,11 +2,11 @@
 
 - [x] overall layout
 - [x] checkerboard background support
-
 - [x] canvas view in center
-- [ ] change cursor based on tool
 
 - [ ] mouse wheel zoom in and out
+- [ ] change cursor based on tool
+
 - [ ] save to png
 - [ ] export css rule [box-shadow-pixels](https://www.npmjs.com/package/box-shadow-pixels)
 - [ ] timeframe and animation support, gif download
