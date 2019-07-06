@@ -1,14 +1,16 @@
 import React from "react";
 import { ReactEventHandlers } from "react-use-gesture/events";
 import "./Canvas.css";
-import {animated} from 'react-spring'
+import { animated } from "react-spring";
 
 interface Props {
   width: number;
   height: number;
   animatedProps: React.CSSProperties;
-  canvasRefCallback: (instance: HTMLCanvasElement) => void; // TODO nullable
-  bindGesture: (...args: any[]) => ReactEventHandlers; // TODO nullable
+  canvasRefCallback?: (instance: HTMLCanvasElement) => void;
+  bindGesture?: (...args: any[]) => ReactEventHandlers;
+  style?: React.CSSProperties;
+  className?: string;
 }
 
 const _PureCanvas: React.FC<Props> = ({
@@ -16,16 +18,19 @@ const _PureCanvas: React.FC<Props> = ({
   height,
   animatedProps,
   canvasRefCallback,
-  bindGesture
+  bindGesture,
+  style,
+  className
 }) => {
+  const gestureHandlers = bindGesture ? bindGesture() : {};
   return (
     <animated.canvas
-      {...bindGesture()}
+      {...gestureHandlers}
       ref={canvasRefCallback}
       width={width}
       height={height}
-      className={"Canvas-pixelated"}
-      style={animatedProps}
+      className={"Canvas-pixelated " + className}
+      style={{ ...style, ...animatedProps }}
     />
   );
 };

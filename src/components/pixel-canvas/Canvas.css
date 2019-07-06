@@ -4,4 +4,12 @@
   image-rendering: -moz-crisp-edges;
   image-rendering: -o-pixelated;
   image-rendering: pixelated;
+
+  position: fixed;
+}
+
+.Canvas-main {
+  border: solid 1px #fff;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.64);
+  z-index: 2;
 }

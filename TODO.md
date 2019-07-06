@@ -1,9 +1,11 @@
 # TODO
 
-- [ ] overall layout
-- [ ] checkerboard background support
+- [x] overall layout
+- [x] checkerboard background support
 
-- [ ] canvas view
+- [ ] canvas view in center
+- [ ] change cursor based on tool
+
 - [ ] mouse wheel zoom in and out
 - [ ] save to png
 - [ ] export css rule [box-shadow-pixels](https://www.npmjs.com/package/box-shadow-pixels)

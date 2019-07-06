@@ -12,26 +12,22 @@ export const App: React.FC = () => {
   return (
     <StoreProvider store={store as any}>
       <Layout
-        top={
-          <Menu />
-        }
-        left={
-          <Tools />
-        }
+        top={<Menu />}
+        left={<Tools />}
         middle={
-          <PixelCanvas />
+          <div
+            style={{
+              backgroundColor: "#1E1E1E",
+              width: "100%",
+              height: "100%",
+              boxShadow: "inset 0px 0px 5px 0px rgba(0, 0, 0, 0.4)"
+            }}
+          >
+            <PixelCanvas />
+          </div>
         }
-        right={
-          <ColorPalette />
-        }
+        right={<ColorPalette />}
       />
-      {/* <div className="App">
-        <header className="App-header">
-          <ColorPalette />
-          <PencilTool />
-          <PixelCanvas />
-        </header>
-      </div> */}
     </StoreProvider>
   );
 };

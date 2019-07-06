@@ -1,5 +1,4 @@
 import React from "react";
-import { useDimensions } from "./useDimensions";
 
 interface Props {
   top: React.ReactElement;
@@ -9,9 +8,6 @@ interface Props {
 }
 
 export const Layout: React.FC<Props> = ({ top, left, middle, right }) => {
-  const [ref, dimension] = useDimensions({ liveMeasure: false });
-  console.log(dimension);
-
   return (
     <>
       <div
@@ -77,17 +73,7 @@ export const Layout: React.FC<Props> = ({ top, left, middle, right }) => {
           display: "block"
         }}
       >
-        <div
-          ref={ref}
-          style={{
-            backgroundColor: "#1E1E1E",
-            width: "100%",
-            height: "100%",
-            boxShadow: "inset 0px 0px 5px 0px rgba(0, 0, 0, 0.4)"
-          }}
-        >
-          {middle}
-        </div>
+        {middle}
       </div>
     </>
   );

@@ -8,9 +8,42 @@ export interface CanvasContext {
 }
 
 export const clear = ({ ctx, width, height }: CanvasContext) => {
-  // ctx.clearRect(0, 0, width, height);
-  ctx.fillStyle = "white"; // TODO use clearRect
-  ctx.fillRect(0, 0, width, height);
+  ctx.clearRect(0, 0, width, height);
+};
+
+export const checkerBoardPattern = (
+  canvasContext: CanvasContext,
+  {
+    squareSize,
+    firstColor,
+    secondColor
+  }: { squareSize: number; firstColor: string; secondColor: string }
+) => {
+  const { width, height } = canvasContext;
+  const columns = Math.ceil(width / squareSize);
+  let color = firstColor;
+
+  for (let i = 0; i < height; i += squareSize) {
+    for (let j = 0; j < width; j += squareSize) {
+      setColor(
+        {
+          ...canvasContext,
+          brushSize: squareSize
+        },
+        {
+          x: j,
+          y: i,
+          color
+        }
+      );
+      color = color === firstColor ? secondColor : firstColor;
+    }
+
+    // flip again if even columns
+    if (columns % 2 === 0) {
+      color = color === firstColor ? secondColor : firstColor;
+    }
+  }
 };
 
 export const withinBound = (
@@ -21,25 +54,6 @@ export const withinBound = (
     return false;
   }
   return true;
-};
-
-export const setColor = (
-  canvasContext: CanvasContext,
-  { x, y, color }: { x: number; y: number; color: Color }
-) => {
-  const { ctx, brushSize } = canvasContext;
-  if (!withinBound(canvasContext, { x, y })) {
-    return;
-  }
-
-  // canvas logic to fill that rect
-  ctx.fillStyle = color;
-  ctx.fillRect(
-    x - Math.floor(brushSize / 2),
-    y - Math.floor(brushSize / 2),
-    brushSize,
-    brushSize
-  );
 };
 
 export const line = (
@@ -58,7 +72,7 @@ export const line = (
     color: string;
   }
 ) => {
-  const { ctx, width, height, brushSize } = canvasContext;
+  const { width, height } = canvasContext;
   const xClamp = clamp({
     min: 0,
     max: width - 1
@@ -80,14 +94,7 @@ export const line = (
   let err = dx - dy;
 
   while (true) {
-    //set pixel
-    ctx.fillStyle = color;
-    ctx.fillRect(
-      x0 - Math.floor(brushSize / 2),
-      y0 - Math.floor(brushSize / 2),
-      brushSize,
-      brushSize
-    );
+    setColor(canvasContext, { x: x0, y: y0, color });
 
     //if we've reached the end goal, exit the loop
     if (x0 === x1 && y0 === y1) {
@@ -103,6 +110,15 @@ export const line = (
       y0 += sy;
     }
   }
+};
+
+export const setColor = (
+  canvasContext: CanvasContext,
+  { x, y, color }: { x: number; y: number; color: Color }
+) => {
+  const { ctx, brushSize } = canvasContext;
+  ctx.fillStyle = color;
+  ctx.fillRect(x, y, brushSize, brushSize);
 };
 
 const clamp = ({ min, max }: { min: number; max: number }) => (
