@@ -3,7 +3,7 @@
 - [x] overall layout
 - [x] checkerboard background support
 
-- [ ] canvas view in center
+- [x] canvas view in center
 - [ ] change cursor based on tool
 
 - [ ] mouse wheel zoom in and out

@@ -6,6 +6,7 @@ import {
   withinBound,
   checkerBoardPattern
 } from "./canvas-fns";
+import { getCenterOffset } from "./get-center-offset";
 import { useStoreState } from "easy-peasy";
 import { StoreModel } from "../../store";
 import { PureCanvas } from "./PureCanvas";
@@ -13,7 +14,9 @@ import { useGesture } from "react-use-gesture";
 import { useSpring } from "react-spring";
 import { createPropGetter } from "../../createPropGetter";
 
-type Props = {} & Partial<DefaultProps>;
+type Props = {
+  parentDomRect: DOMRect;
+} & Partial<DefaultProps>;
 
 const defaultProps = {
   transparentGridSize: 2,
@@ -25,6 +28,7 @@ const getProps = createPropGetter(defaultProps);
 
 export const PixelCanvas: React.FC<Props> = props => {
   const {
+    parentDomRect,
     transparentGridSize,
     transparentFirstColor,
     transparentSecondColor
@@ -67,20 +71,8 @@ export const PixelCanvas: React.FC<Props> = props => {
   }, []);
 
   // canvas ref callback
-  const canvasRef = useRef<HTMLCanvasElement>();
-  const canvasRefCallback = useCallback(node => {
-    if (node !== null) {
-      canvasRef.current = node;
-    }
-  }, []);
-
-  // background canvas ref callback
-  const backgroundCanvasRef = useRef<HTMLCanvasElement>();
-  const backgroundCanvasRefCallback = useCallback(node => {
-    if (node !== null) {
-      backgroundCanvasRef.current = node;
-    }
-  }, []);
+  const [canvasRef, canvasRefCallback] = useCanvasRef();
+  const [backgroundCanvasRef, backgroundCanvasRefCallback] = useCanvasRef();
 
   // gesture for canvas
   const bindGesture = useGesture({
@@ -110,19 +102,12 @@ export const PixelCanvas: React.FC<Props> = props => {
     }
   });
 
-  // animation
-  const [animatedProps, setAnimatedProps] = useSpring(() => {
-    return {
-      width: zoom * width,
-      height: zoom * height
-    };
+  const animatedProps = useAnimatedCanvasProps({
+    width,
+    height,
+    zoom,
+    parentDomRect
   });
-  useEffect(() => {
-    setAnimatedProps({
-      width: zoom * width,
-      height: zoom * height
-    });
-  }, [width, height, zoom, setAnimatedProps]);
 
   return (
     <>
@@ -145,3 +130,64 @@ export const PixelCanvas: React.FC<Props> = props => {
 };
 
 PixelCanvas.defaultProps = defaultProps;
+
+const useCanvasRef = (): [
+  React.MutableRefObject<HTMLCanvasElement>,
+  (node: any) => void
+] => {
+  const ref = useRef<HTMLCanvasElement>();
+  const callback = useCallback(node => {
+    if (node) {
+      ref.current = node;
+    }
+  }, []);
+  return [ref as React.MutableRefObject<HTMLCanvasElement>, callback];
+};
+
+const useAnimatedCanvasProps = ({
+  width,
+  height,
+  zoom,
+  parentDomRect
+}: {
+  width: number;
+  height: number;
+  zoom: number;
+  parentDomRect: DOMRect;
+}): React.CSSProperties => {
+  const [animatedProps, setAnimatedProps] = useSpring(() => {
+    return {
+      width: zoom * width,
+      height: zoom * height
+    };
+  });
+  useEffect(() => {
+    const w = zoom * width;
+    const h = zoom * height;
+    setAnimatedProps({
+      width: w,
+      height: h
+    });
+  }, [width, height, zoom, setAnimatedProps]);
+
+  const [animatedOffsetProps, setAnimatedOffsetProps] = useSpring(() => {
+    return {
+      left: 0,
+      top: 0,
+      immediate: true
+    };
+  });
+  useEffect(() => {
+    const w = zoom * width;
+    const h = zoom * height;
+    const offset = parentDomRect
+      ? getCenterOffset({ parentDomRect, width: w, height: h })
+      : {};
+
+    setAnimatedOffsetProps({
+      ...offset
+    });
+  }, [width, height, zoom, setAnimatedOffsetProps, parentDomRect]);
+
+  return { ...animatedProps, ...animatedOffsetProps };
+};

@@ -1,13 +1,16 @@
 import React from "react";
+import { useDimensions } from "./useDimensions";
 
 interface Props {
   top: React.ReactElement;
   left: React.ReactElement;
-  middle: React.ReactElement;
+  middle: (domRect: DOMRect) => React.ReactElement;
   right: React.ReactElement;
 }
 
 export const Layout: React.FC<Props> = ({ top, left, middle, right }) => {
+  const [ref, domRect] = useDimensions();
+
   return (
     <>
       <div
@@ -63,7 +66,9 @@ export const Layout: React.FC<Props> = ({ top, left, middle, right }) => {
         </div>
       </div>
 
+      {/* Fixed middle */}
       <div
+        ref={ref}
         style={{
           bottom: "0px",
           left: "64px",
@@ -73,7 +78,16 @@ export const Layout: React.FC<Props> = ({ top, left, middle, right }) => {
           display: "block"
         }}
       >
-        {middle}
+        <div
+          style={{
+            backgroundColor: "#1E1E1E",
+            width: "100%",
+            height: "100%",
+            boxShadow: "inset 0px 0px 5px 0px rgba(0, 0, 0, 0.4)"
+          }}
+        >
+          {middle(domRect)}
+        </div>
       </div>
     </>
   );

@@ -5,7 +5,7 @@
   image-rendering: -o-pixelated;
   image-rendering: pixelated;
 
-  position: fixed;
+  position: absolute;
 }
 
 .Canvas-main {
