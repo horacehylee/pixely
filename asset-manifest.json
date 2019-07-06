@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.css": "/pixely/static/css/main.098d1f21.chunk.css",
+    "main.css": "/pixely/static/css/main.bc599851.chunk.css",
     "main.js": "/pixely/static/js/main.d1404275.chunk.js",
     "main.js.map": "/pixely/static/js/main.d1404275.chunk.js.map",
     "runtime~main.js": "/pixely/static/js/runtime~main.7d74c7c8.js",
@@ -8,8 +8,8 @@
     "static/js/2.472459b3.chunk.js": "/pixely/static/js/2.472459b3.chunk.js",
     "static/js/2.472459b3.chunk.js.map": "/pixely/static/js/2.472459b3.chunk.js.map",
     "index.html": "/pixely/index.html",
-    "precache-manifest.7268b456f249f3f3bd43b5bfa9905ade.js": "/pixely/precache-manifest.7268b456f249f3f3bd43b5bfa9905ade.js",
+    "precache-manifest.e62434838d5e73459c9d4a2b818a139d.js": "/pixely/precache-manifest.e62434838d5e73459c9d4a2b818a139d.js",
     "service-worker.js": "/pixely/service-worker.js",
-    "static/css/main.098d1f21.chunk.css.map": "/pixely/static/css/main.098d1f21.chunk.css.map"
+    "static/css/main.bc599851.chunk.css.map": "/pixely/static/css/main.bc599851.chunk.css.map"
   }
 }
