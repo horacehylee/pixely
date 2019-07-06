@@ -1,0 +1,1 @@
+export { CanvasArea } from "./CanvasArea";

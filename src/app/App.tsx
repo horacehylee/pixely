@@ -1,12 +1,11 @@
 import React from "react";
-import "./App.css";
 import { StoreProvider } from "easy-peasy";
 import { store } from "./../store";
 import { Layout } from "../layout";
 import { Menu } from "../components/menu";
 import { Tools } from "../components/tool";
 import { ColorPalette } from "../components/color-palette";
-import { PixelCanvas } from "../components/pixel-canvas";
+import { CanvasArea } from "../components/canvas-area";
 
 export const App: React.FC = () => {
   return (
@@ -14,7 +13,7 @@ export const App: React.FC = () => {
       <Layout
         top={<Menu />}
         left={<Tools />}
-        middle={domRect => <PixelCanvas parentDomRect={domRect} />}
+        middle={<CanvasArea />}
         right={<ColorPalette />}
       />
     </StoreProvider>

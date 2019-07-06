@@ -108,6 +108,13 @@ export const PixelCanvas: React.FC<Props> = props => {
     zoom,
     parentDomRect
   });
+  const backgroundAnimatedProps = useAnimatedCanvasProps({
+    width,
+    height,
+    zoom,
+    parentDomRect,
+    isBackground: true
+  });
 
   return (
     <>
@@ -123,7 +130,7 @@ export const PixelCanvas: React.FC<Props> = props => {
         canvasRefCallback={backgroundCanvasRefCallback}
         width={width}
         height={height}
-        animatedProps={animatedProps}
+        animatedProps={backgroundAnimatedProps}
       />
     </>
   );
@@ -148,33 +155,35 @@ const useAnimatedCanvasProps = ({
   width,
   height,
   zoom,
-  parentDomRect
+  parentDomRect,
+  isBackground
 }: {
   width: number;
   height: number;
   zoom: number;
   parentDomRect: DOMRect;
+  isBackground?: boolean;
 }): React.CSSProperties => {
   const [animatedProps, setAnimatedProps] = useSpring(() => {
     return {
-      width: zoom * width,
-      height: zoom * height
+      width: zoom * width + (isBackground ? 1 : 0),
+      height: zoom * height + (isBackground ? 1 : 0)
     };
   });
   useEffect(() => {
-    const w = zoom * width;
-    const h = zoom * height;
+    const w = zoom * width + (isBackground ? 1 : 0);
+    const h = zoom * height + (isBackground ? 1 : 0);
     setAnimatedProps({
       width: w,
       height: h
     });
-  }, [width, height, zoom, setAnimatedProps]);
+  }, [width, height, zoom, setAnimatedProps, isBackground]);
 
+  // TODO: enable pan and zoom control offset
   const [animatedOffsetProps, setAnimatedOffsetProps] = useSpring(() => {
     return {
       left: 0,
-      top: 0,
-      immediate: true
+      top: 0
     };
   });
   useEffect(() => {
@@ -190,4 +199,5 @@ const useAnimatedCanvasProps = ({
   }, [width, height, zoom, setAnimatedOffsetProps, parentDomRect]);
 
   return { ...animatedProps, ...animatedOffsetProps };
+  // return { ...animatedProps };
 };

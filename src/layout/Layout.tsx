@@ -1,16 +1,13 @@
 import React from "react";
-import { useDimensions } from "./useDimensions";
 
 interface Props {
   top: React.ReactElement;
   left: React.ReactElement;
-  middle: (domRect: DOMRect) => React.ReactElement;
+  middle: React.ReactElement;
   right: React.ReactElement;
 }
 
 export const Layout: React.FC<Props> = ({ top, left, middle, right }) => {
-  const [ref, domRect] = useDimensions();
-
   return (
     <>
       <div
@@ -22,7 +19,7 @@ export const Layout: React.FC<Props> = ({ top, left, middle, right }) => {
           color: "#ADADAD"
         }}
       >
-        <div style={{ flex: 0, height: 48 }}>
+        <div style={{ flex: 0, height: 48, zIndex: 100 }}>
           <div
             style={{
               backgroundColor: "#333333",
@@ -34,7 +31,7 @@ export const Layout: React.FC<Props> = ({ top, left, middle, right }) => {
           </div>
         </div>
         <div style={{ flex: 1, display: "flex" }}>
-          <div style={{ flex: 0, maxWidth: 64, minWidth: 64 }}>
+          <div style={{ flex: 0, maxWidth: 64, minWidth: 64, zIndex: 100 }}>
             <div
               style={{
                 backgroundColor: "#2A2D2E",
@@ -51,7 +48,7 @@ export const Layout: React.FC<Props> = ({ top, left, middle, right }) => {
               flex: 1
             }}
           />
-          <div style={{ flex: 0, maxWidth: 48, minWidth: 48 }}>
+          <div style={{ flex: 0, maxWidth: 48, minWidth: 48, zIndex: 100 }}>
             <div
               style={{
                 backgroundColor: "#2A2D2E",
@@ -68,7 +65,6 @@ export const Layout: React.FC<Props> = ({ top, left, middle, right }) => {
 
       {/* Fixed middle */}
       <div
-        ref={ref}
         style={{
           bottom: "0px",
           left: "64px",
@@ -86,7 +82,7 @@ export const Layout: React.FC<Props> = ({ top, left, middle, right }) => {
             boxShadow: "inset 0px 0px 5px 0px rgba(0, 0, 0, 0.4)"
           }}
         >
-          {middle(domRect)}
+          {middle}
         </div>
       </div>
     </>

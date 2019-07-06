@@ -56,6 +56,8 @@ interface CanvasModel {
   width: number;
   height: number;
   zoom: number;
+  maxZoom: number;
+  minZoom: number;
 
   increaseZoom: Action<CanvasModel, number>;
   decreaseZoom: Action<CanvasModel, number>;
@@ -64,14 +66,13 @@ const defaultCanvasModel: CanvasModel = {
   width: 20,
   height: 20,
   zoom: 30,
+  maxZoom: 200,
+  minZoom: 1,
   increaseZoom: action((state, payload) => {
-    state.zoom = Math.min(100, state.zoom + payload);
+    state.zoom = Math.min(state.maxZoom, state.zoom + payload);
   }),
   decreaseZoom: action((state, payload) => {
-    if (state.zoom - payload <= 0) {
-      return state;
-    }
-    state.zoom -= payload;
+    state.zoom = Math.max(state.minZoom, state.zoom - payload);
   })
 };
 
