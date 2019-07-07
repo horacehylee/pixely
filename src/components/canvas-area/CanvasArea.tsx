@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useDimensions } from "./useDimensions";
 import { PixelCanvas } from "../pixel-canvas";
-import { useStoreActions } from "easy-peasy";
+import { useStoreActions, useStoreState } from "easy-peasy";
 import { StoreModel } from "../../store";
+import { useSpring } from "react-spring";
 
 export const CanvasArea: React.FC = () => {
   const [ref, domRect] = useDimensions();
@@ -13,6 +14,23 @@ export const CanvasArea: React.FC = () => {
     actions => actions.canvas.decreaseZoom
   );
 
+  const zoom = useStoreState<StoreModel>(state => state.canvas.zoom);
+  const width = useStoreState<StoreModel>(state => state.canvas.width);
+  const height = useStoreState<StoreModel>(state => state.canvas.height);
+
+  const [wheelXy, setWheelXy] = useState<{ x: number; y: number }>({
+    x: 0,
+    y: 0
+  });
+
+  const animatedStyleProps = useAnimatedCanvasProps({
+    width,
+    height,
+    zoom,
+    parentDomRect: domRect,
+    wheelXy
+  });
+
   const handleWheel = (event: React.WheelEvent) => {
     const deltaY = event.deltaY;
     if (deltaY < 0) {
@@ -20,6 +38,7 @@ export const CanvasArea: React.FC = () => {
     } else {
       decreaseZoom(deltaY / 30);
     }
+    setWheelXy({ x: event.clientX, y: event.clientY });
   };
 
   return (
@@ -28,7 +47,117 @@ export const CanvasArea: React.FC = () => {
       onWheel={handleWheel}
       style={{ width: "100%", height: "100%" }}
     >
-      <PixelCanvas parentDomRect={domRect} />
+      <PixelCanvas animatedStyleProps={animatedStyleProps} />
     </div>
   );
+};
+
+const useAnimatedCanvasProps = ({
+  width,
+  height,
+  zoom,
+  parentDomRect,
+  wheelXy
+}: {
+  width: number;
+  height: number;
+  zoom: number;
+  parentDomRect: DOMRect;
+  wheelXy: { x: number; y: number };
+}): React.CSSProperties => {
+  const [animatedProps, setAnimatedProps] = useSpring(() => {
+    return {
+      width: zoom * width,
+      height: zoom * height
+    };
+  });
+  useEffect(() => {
+    const w = zoom * width;
+    const h = zoom * height;
+    setAnimatedProps({
+      width: w,
+      height: h
+    });
+  }, [width, height, zoom, setAnimatedProps]);
+
+  const previousZoom = usePrevious(zoom);
+
+  // TODO: enable pan and zoom control offset
+  const [animatedOffsetProps, setAnimatedOffsetProps] = useSpring(() => {
+    return {
+      left: 0,
+      top: 0
+    };
+  });
+  const [canvasOffset, setCanvasOffset] = useState<{
+    left: number;
+    top: number;
+  }>({
+    left: 0,
+    top: 0
+  });
+  useEffect(() => {
+    setAnimatedOffsetProps(canvasOffset);
+  }, [canvasOffset, setAnimatedOffsetProps]);
+
+  // offset to center once
+  const [initialized, setInitialized] = useState(false);
+  useEffect(() => {
+    if (initialized) {
+      return;
+    }
+    if (parentDomRect) {
+      setInitialized(true);
+      setCanvasOffset({
+        left: Math.floor((parentDomRect.width - width * zoom) / 2),
+        top: Math.floor((parentDomRect.height - height * zoom) / 2)
+      });
+    }
+  }, [width, height, zoom, initialized, parentDomRect]);
+
+  useEffect(() => {
+    if (!initialized) {
+      return;
+    }
+    if (canvasOffset.left === 0) {
+      return;
+    }
+    const wheelRelative = parentDomRect
+      ? {
+          x: wheelXy.x - parentDomRect.x,
+          y: wheelXy.y - parentDomRect.y
+        }
+      : { x: 0, y: 0 };
+
+    setCanvasOffset({
+      left:
+        canvasOffset.left -
+        ((wheelRelative.x - canvasOffset.left) / previousZoom) *
+          (zoom - previousZoom),
+      top:
+        canvasOffset.top -
+        ((wheelRelative.y - canvasOffset.top) / previousZoom) *
+          (zoom - previousZoom)
+    });
+  }, [
+    width,
+    height,
+    previousZoom,
+    canvasOffset,
+    zoom,
+    initialized,
+    parentDomRect,
+    wheelXy.x,
+    wheelXy.y
+  ]);
+
+  return { ...animatedProps, ...animatedOffsetProps };
+};
+
+const usePrevious = function<TValue>(value: TValue) {
+  const ref = useRef<TValue>(value);
+  useEffect(() => {
+    ref.current = value;
+  }, [value]);
+  return ref.current;
 };

@@ -6,10 +6,14 @@
   image-rendering: pixelated;
 
   position: absolute;
+  border: solid 1px #fff;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.4);
 }
 
 .Canvas-main {
-  border: solid 1px #fff;
-  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.64);
   z-index: 2;
+}
+
+.Canvas-background {
+  z-index: 1;
 }

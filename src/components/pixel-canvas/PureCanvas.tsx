@@ -6,7 +6,7 @@ import { animated } from "react-spring";
 interface Props {
   width: number;
   height: number;
-  animatedProps: React.CSSProperties;
+  animatedStyleProps: React.CSSProperties;
   canvasRefCallback?: (instance: HTMLCanvasElement) => void;
   bindGesture?: (...args: any[]) => ReactEventHandlers;
   style?: React.CSSProperties;
@@ -16,7 +16,7 @@ interface Props {
 const _PureCanvas: React.FC<Props> = ({
   width,
   height,
-  animatedProps,
+  animatedStyleProps,
   canvasRefCallback,
   bindGesture,
   style,
@@ -30,7 +30,7 @@ const _PureCanvas: React.FC<Props> = ({
       width={width}
       height={height}
       className={"Canvas-pixelated " + className}
-      style={{ ...style, ...animatedProps }}
+      style={{ ...style, ...animatedStyleProps }}
     />
   );
 };

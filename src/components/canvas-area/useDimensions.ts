@@ -21,9 +21,10 @@ export const useDimensions = ({
   useLayoutEffect(() => {
     if (node) {
       const measure = () => {
-        window.requestAnimationFrame(() =>
-          setDimensions(node.getBoundingClientRect() as DOMRect)
-        );
+        window.requestAnimationFrame(() => {
+          const domRect = node.getBoundingClientRect() as DOMRect;
+          setDimensions(domRect);
+        });
       };
       measure();
 

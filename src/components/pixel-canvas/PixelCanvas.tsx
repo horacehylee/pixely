@@ -6,32 +6,29 @@ import {
   withinBound,
   checkerBoardPattern
 } from "./canvas-fns";
-import { getCenterOffset } from "./get-center-offset";
 import { useStoreState } from "easy-peasy";
 import { StoreModel } from "../../store";
 import { PureCanvas } from "./PureCanvas";
 import { useGesture } from "react-use-gesture";
-import { useSpring } from "react-spring";
 import { createPropGetter } from "../../createPropGetter";
 
-type Props = {
-  parentDomRect: DOMRect;
-} & Partial<DefaultProps>;
+type Props = {} & Partial<DefaultProps>;
 
 const defaultProps = {
   transparentGridSize: 2,
   transparentFirstColor: "#B4AEB7",
-  transparentSecondColor: "#CCC8CE"
+  transparentSecondColor: "#CCC8CE",
+  animatedStyleProps: {} as React.CSSProperties
 };
 type DefaultProps = Readonly<typeof defaultProps>;
 const getProps = createPropGetter(defaultProps);
 
 export const PixelCanvas: React.FC<Props> = props => {
   const {
-    parentDomRect,
     transparentGridSize,
     transparentFirstColor,
-    transparentSecondColor
+    transparentSecondColor,
+    animatedStyleProps
   } = getProps(props);
 
   const selectedColor = useStoreState<StoreModel>(
@@ -102,20 +99,6 @@ export const PixelCanvas: React.FC<Props> = props => {
     }
   });
 
-  const animatedProps = useAnimatedCanvasProps({
-    width,
-    height,
-    zoom,
-    parentDomRect
-  });
-  const backgroundAnimatedProps = useAnimatedCanvasProps({
-    width,
-    height,
-    zoom,
-    parentDomRect,
-    isBackground: true
-  });
-
   return (
     <>
       <PureCanvas
@@ -123,14 +106,15 @@ export const PixelCanvas: React.FC<Props> = props => {
         width={width}
         height={height}
         bindGesture={bindGesture}
-        animatedProps={animatedProps}
+        animatedStyleProps={animatedStyleProps}
         className={"Canvas-main"}
       />
       <PureCanvas
         canvasRefCallback={backgroundCanvasRefCallback}
         width={width}
         height={height}
-        animatedProps={backgroundAnimatedProps}
+        animatedStyleProps={animatedStyleProps}
+        className={"Canvas-background"}
       />
     </>
   );
@@ -149,55 +133,4 @@ const useCanvasRef = (): [
     }
   }, []);
   return [ref as React.MutableRefObject<HTMLCanvasElement>, callback];
-};
-
-const useAnimatedCanvasProps = ({
-  width,
-  height,
-  zoom,
-  parentDomRect,
-  isBackground
-}: {
-  width: number;
-  height: number;
-  zoom: number;
-  parentDomRect: DOMRect;
-  isBackground?: boolean;
-}): React.CSSProperties => {
-  const [animatedProps, setAnimatedProps] = useSpring(() => {
-    return {
-      width: zoom * width + (isBackground ? 1 : 0),
-      height: zoom * height + (isBackground ? 1 : 0)
-    };
-  });
-  useEffect(() => {
-    const w = zoom * width + (isBackground ? 1 : 0);
-    const h = zoom * height + (isBackground ? 1 : 0);
-    setAnimatedProps({
-      width: w,
-      height: h
-    });
-  }, [width, height, zoom, setAnimatedProps, isBackground]);
-
-  // TODO: enable pan and zoom control offset
-  const [animatedOffsetProps, setAnimatedOffsetProps] = useSpring(() => {
-    return {
-      left: 0,
-      top: 0
-    };
-  });
-  useEffect(() => {
-    const w = zoom * width;
-    const h = zoom * height;
-    const offset = parentDomRect
-      ? getCenterOffset({ parentDomRect, width: w, height: h })
-      : {};
-
-    setAnimatedOffsetProps({
-      ...offset
-    });
-  }, [width, height, zoom, setAnimatedOffsetProps, parentDomRect]);
-
-  return { ...animatedProps, ...animatedOffsetProps };
-  // return { ...animatedProps };
 };
