@@ -102,19 +102,19 @@ export const PixelCanvas: React.FC<Props> = props => {
   return (
     <>
       <PureCanvas
+        canvasRefCallback={backgroundCanvasRefCallback}
+        width={width}
+        height={height}
+        animatedStyleProps={animatedStyleProps}
+        className={"Canvas-background"}
+      />
+      <PureCanvas
         canvasRefCallback={canvasRefCallback}
         width={width}
         height={height}
         bindGesture={bindGesture}
         animatedStyleProps={animatedStyleProps}
         className={"Canvas-main"}
-      />
-      <PureCanvas
-        canvasRefCallback={backgroundCanvasRefCallback}
-        width={width}
-        height={height}
-        animatedStyleProps={animatedStyleProps}
-        className={"Canvas-background"}
       />
     </>
   );

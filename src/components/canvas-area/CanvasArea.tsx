@@ -52,6 +52,14 @@ export const CanvasArea: React.FC = () => {
   );
 };
 
+const toEven = (val: number) => {
+  if (val % 2 === 0) {
+    return val;
+  } else {
+    return val + 1;
+  }
+};
+
 const useAnimatedCanvasProps = ({
   width,
   height,
@@ -109,8 +117,8 @@ const useAnimatedCanvasProps = ({
     if (parentDomRect) {
       setInitialized(true);
       setCanvasOffset({
-        left: Math.floor((parentDomRect.width - width * zoom) / 2),
-        top: Math.floor((parentDomRect.height - height * zoom) / 2)
+        left: toEven(Math.floor((parentDomRect.width - width * zoom) / 2)),
+        top: toEven(Math.floor((parentDomRect.height - height * zoom) / 2))
       });
     }
   }, [width, height, zoom, initialized, parentDomRect]);
@@ -129,16 +137,19 @@ const useAnimatedCanvasProps = ({
         }
       : { x: 0, y: 0 };
 
-    setCanvasOffset({
-      left:
-        canvasOffset.left -
-        ((wheelRelative.x - canvasOffset.left) / previousZoom) *
-          (zoom - previousZoom),
-      top:
-        canvasOffset.top -
-        ((wheelRelative.y - canvasOffset.top) / previousZoom) *
-          (zoom - previousZoom)
-    });
+    const threshold = 2;
+    const leftDelta =
+      ((wheelRelative.x - canvasOffset.left) / previousZoom) *
+      (zoom - previousZoom);
+    const rightDelta =
+      ((wheelRelative.y - canvasOffset.top) / previousZoom) *
+      (zoom - previousZoom);
+    if (Math.abs(leftDelta) > threshold || Math.abs(rightDelta) > threshold) {
+      setCanvasOffset({
+        left: toEven(Math.floor(canvasOffset.left - leftDelta)),
+        top: toEven(Math.floor(canvasOffset.top - rightDelta))
+      });
+    }
   }, [
     width,
     height,

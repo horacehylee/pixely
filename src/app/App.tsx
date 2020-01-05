@@ -13,6 +13,7 @@ export const App: React.FC = () => {
       <Layout
         top={<Menu />}
         left={<Tools />}
+        // middle={<div></div>}
         middle={<CanvasArea />}
         right={<ColorPalette />}
       />

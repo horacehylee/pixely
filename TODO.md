@@ -4,7 +4,8 @@
 - [x] checkerboard background support
 - [x] canvas view in center
 
-- [ ] mouse wheel zoom in and out
+- [x] mouse wheel zoom in and out
+- [ ] pan with middle mouse button
 - [ ] change cursor based on tool
 
 - [ ] save to png
