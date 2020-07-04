@@ -1,6 +1,5 @@
 import React from "react";
 import "./ColorPalette.css";
-import { StoreModel } from "../../store";
 import { useStoreActions, useStoreState } from "../../hooks";
 
 const AddIcon: React.FC = () => {
