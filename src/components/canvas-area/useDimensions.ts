@@ -7,12 +7,12 @@ interface UseDimensionsArgs {
 }
 
 export const useDimensions = ({
-  liveMeasure = true
+  liveMeasure = true,
 }: UseDimensionsArgs = {}): UseDimensionsHook => {
   const [dimensions, setDimensions] = useState<DOMRect>();
-  const [node, setNode] = useState();
+  const [node, setNode] = useState<HTMLElement>();
 
-  const ref = useCallback(node => {
+  const ref = useCallback((node) => {
     if (node) {
       setNode(node);
     }
@@ -22,8 +22,10 @@ export const useDimensions = ({
     if (node) {
       const measure = () => {
         window.requestAnimationFrame(() => {
-          const domRect = node.getBoundingClientRect() as DOMRect;
-          setDimensions(domRect);
+          if (node) {
+            const domRect = node.getBoundingClientRect() as DOMRect;
+            setDimensions(domRect);
+          }
         });
       };
       measure();
@@ -40,5 +42,5 @@ export const useDimensions = ({
     }
   }, [node, liveMeasure]);
 
-  return [ref, dimensions!, node];
+  return [ref, dimensions!, node!];
 };

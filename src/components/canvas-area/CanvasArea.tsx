@@ -1,26 +1,25 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useDimensions } from "./useDimensions";
 import { PixelCanvas } from "../pixel-canvas";
-import { useStoreActions, useStoreState } from "easy-peasy";
-import { StoreModel } from "../../store";
 import { useSpring } from "react-spring";
+import { useStoreActions, useStoreState } from "../../hooks";
 
 export const CanvasArea: React.FC = () => {
   const [ref, domRect] = useDimensions();
-  const increaseZoom = useStoreActions<StoreModel>(
-    actions => actions.canvas.increaseZoom
+  const increaseZoom = useStoreActions(
+    (actions) => actions.canvas.increaseZoom
   );
-  const decreaseZoom = useStoreActions<StoreModel>(
-    actions => actions.canvas.decreaseZoom
+  const decreaseZoom = useStoreActions(
+    (actions) => actions.canvas.decreaseZoom
   );
 
-  const zoom = useStoreState<StoreModel>(state => state.canvas.zoom);
-  const width = useStoreState<StoreModel>(state => state.canvas.width);
-  const height = useStoreState<StoreModel>(state => state.canvas.height);
+  const zoom = useStoreState((state) => state.canvas.zoom);
+  const width = useStoreState((state) => state.canvas.width);
+  const height = useStoreState((state) => state.canvas.height);
 
   const [wheelXy, setWheelXy] = useState<{ x: number; y: number }>({
     x: 0,
-    y: 0
+    y: 0,
   });
 
   const animatedStyleProps = useAnimatedCanvasProps({
@@ -28,7 +27,7 @@ export const CanvasArea: React.FC = () => {
     height,
     zoom,
     parentDomRect: domRect,
-    wheelXy
+    wheelXy,
   });
 
   const handleWheel = (event: React.WheelEvent) => {
@@ -65,7 +64,7 @@ const useAnimatedCanvasProps = ({
   height,
   zoom,
   parentDomRect,
-  wheelXy
+  wheelXy,
 }: {
   width: number;
   height: number;
@@ -76,7 +75,7 @@ const useAnimatedCanvasProps = ({
   const [animatedProps, setAnimatedProps] = useSpring(() => {
     return {
       width: zoom * width,
-      height: zoom * height
+      height: zoom * height,
     };
   });
   useEffect(() => {
@@ -84,7 +83,7 @@ const useAnimatedCanvasProps = ({
     const h = zoom * height;
     setAnimatedProps({
       width: w,
-      height: h
+      height: h,
     });
   }, [width, height, zoom, setAnimatedProps]);
 
@@ -94,7 +93,7 @@ const useAnimatedCanvasProps = ({
   const [animatedOffsetProps, setAnimatedOffsetProps] = useSpring(() => {
     return {
       left: 0,
-      top: 0
+      top: 0,
     };
   });
   const [canvasOffset, setCanvasOffset] = useState<{
@@ -102,7 +101,7 @@ const useAnimatedCanvasProps = ({
     top: number;
   }>({
     left: 0,
-    top: 0
+    top: 0,
   });
   useEffect(() => {
     setAnimatedOffsetProps(canvasOffset);
@@ -118,7 +117,7 @@ const useAnimatedCanvasProps = ({
       setInitialized(true);
       setCanvasOffset({
         left: toEven(Math.floor((parentDomRect.width - width * zoom) / 2)),
-        top: toEven(Math.floor((parentDomRect.height - height * zoom) / 2))
+        top: toEven(Math.floor((parentDomRect.height - height * zoom) / 2)),
       });
     }
   }, [width, height, zoom, initialized, parentDomRect]);
@@ -133,7 +132,7 @@ const useAnimatedCanvasProps = ({
     const wheelRelative = parentDomRect
       ? {
           x: wheelXy.x - parentDomRect.x,
-          y: wheelXy.y - parentDomRect.y
+          y: wheelXy.y - parentDomRect.y,
         }
       : { x: 0, y: 0 };
 
@@ -147,7 +146,7 @@ const useAnimatedCanvasProps = ({
     if (Math.abs(leftDelta) > threshold || Math.abs(rightDelta) > threshold) {
       setCanvasOffset({
         left: toEven(Math.floor(canvasOffset.left - leftDelta)),
-        top: toEven(Math.floor(canvasOffset.top - rightDelta))
+        top: toEven(Math.floor(canvasOffset.top - rightDelta)),
       });
     }
   }, [
@@ -159,13 +158,13 @@ const useAnimatedCanvasProps = ({
     initialized,
     parentDomRect,
     wheelXy.x,
-    wheelXy.y
+    wheelXy.y,
   ]);
 
   return { ...animatedProps, ...animatedOffsetProps };
 };
 
-const usePrevious = function<TValue>(value: TValue) {
+const usePrevious = function <TValue>(value: TValue) {
   const ref = useRef<TValue>(value);
   useEffect(() => {
     ref.current = value;

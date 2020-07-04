@@ -25,12 +25,12 @@ const defaultPaletteModel: PaletteModel = {
     "#f4f4f4",
     "#94b0c2",
     "#566c86",
-    "#333c57"
+    "#333c57",
   ],
   selectColor: action((state, index) => {
     state.selectedIndex = index;
   }),
-  selectedColor: computed(state => state.colors[state.selectedIndex])
+  selectedColor: computed((state) => state.colors[state.selectedIndex]),
 };
 
 type ToolType = "pencil" | "eraser" | "fill" | "pan" | "eyedropper";
@@ -49,7 +49,7 @@ const defaultToolModel: ToolModel = {
   }),
   decreaseBrushSize: action((state, payload) => {
     state.brushSize = Math.max(1, state.brushSize - payload);
-  })
+  }),
 };
 
 interface CanvasModel {
@@ -73,19 +73,19 @@ const defaultCanvasModel: CanvasModel = {
   }),
   decreaseZoom: action((state, payload) => {
     state.zoom = Math.max(state.minZoom, state.zoom - payload);
-  })
+  }),
 };
 
-export type StoreModel = {
+export interface StoreModel {
   palette: PaletteModel;
   tool: ToolModel;
   canvas: CanvasModel;
-};
+}
 
 export const storeModel: StoreModel = {
   palette: defaultPaletteModel,
   tool: defaultToolModel,
-  canvas: defaultCanvasModel
+  canvas: defaultCanvasModel,
 };
 
 export const store = createStore(storeModel);

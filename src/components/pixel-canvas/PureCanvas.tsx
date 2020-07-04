@@ -1,5 +1,4 @@
 import React from "react";
-import { ReactEventHandlers } from "react-use-gesture/events";
 import "./Canvas.css";
 import { animated } from "react-spring";
 
@@ -8,7 +7,7 @@ interface Props {
   height: number;
   animatedStyleProps: React.CSSProperties;
   canvasRefCallback?: (instance: HTMLCanvasElement) => void;
-  bindGesture?: (...args: any[]) => ReactEventHandlers;
+  bindGesture?: (...args: any[]) => any;
   style?: React.CSSProperties;
   className?: string;
 }
@@ -20,7 +19,7 @@ const _PureCanvas: React.FC<Props> = ({
   canvasRefCallback,
   bindGesture,
   style,
-  className
+  className,
 }) => {
   const gestureHandlers = bindGesture ? bindGesture() : {};
   return (

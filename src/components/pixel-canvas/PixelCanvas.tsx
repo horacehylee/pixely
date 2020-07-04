@@ -4,13 +4,12 @@ import {
   clear,
   line,
   withinBound,
-  checkerBoardPattern
+  checkerBoardPattern,
 } from "./canvas-fns";
-import { useStoreState } from "easy-peasy";
-import { StoreModel } from "../../store";
 import { PureCanvas } from "./PureCanvas";
 import { useGesture } from "react-use-gesture";
 import { createPropGetter } from "../../createPropGetter";
+import { useStoreState } from "../../hooks";
 
 type Props = {} & Partial<DefaultProps>;
 
@@ -18,26 +17,24 @@ const defaultProps = {
   transparentGridSize: 2,
   transparentFirstColor: "#B4AEB7",
   transparentSecondColor: "#CCC8CE",
-  animatedStyleProps: {} as React.CSSProperties
+  animatedStyleProps: {} as React.CSSProperties,
 };
 type DefaultProps = Readonly<typeof defaultProps>;
 const getProps = createPropGetter(defaultProps);
 
-export const PixelCanvas: React.FC<Props> = props => {
+export const PixelCanvas: React.FC<Props> = (props) => {
   const {
     transparentGridSize,
     transparentFirstColor,
     transparentSecondColor,
-    animatedStyleProps
+    animatedStyleProps,
   } = getProps(props);
 
-  const selectedColor = useStoreState<StoreModel>(
-    state => state.palette.selectedColor
-  );
-  const brushSize = useStoreState<StoreModel>(state => state.tool.brushSize);
-  const zoom = useStoreState<StoreModel>(state => state.canvas.zoom);
-  const width = useStoreState<StoreModel>(state => state.canvas.width);
-  const height = useStoreState<StoreModel>(state => state.canvas.height);
+  const selectedColor = useStoreState((state) => state.palette.selectedColor);
+  const brushSize = useStoreState((state) => state.tool.brushSize);
+  const zoom = useStoreState((state) => state.canvas.zoom);
+  const width = useStoreState((state) => state.canvas.width);
+  const height = useStoreState((state) => state.canvas.height);
 
   const getCanvasContext = (
     ref?: React.MutableRefObject<HTMLCanvasElement | undefined>
@@ -46,7 +43,7 @@ export const PixelCanvas: React.FC<Props> = props => {
       ctx: (ref ? ref : canvasRef).current!.getContext("2d")!,
       width,
       height,
-      brushSize
+      brushSize,
     } as CanvasContext);
   };
 
@@ -61,7 +58,7 @@ export const PixelCanvas: React.FC<Props> = props => {
     checkerBoardPattern(backgroundCanvasContext, {
       squareSize: transparentGridSize,
       firstColor: transparentFirstColor,
-      secondColor: transparentSecondColor
+      secondColor: transparentSecondColor,
     });
 
     // eslint-disable-next-line
@@ -73,7 +70,7 @@ export const PixelCanvas: React.FC<Props> = props => {
 
   // gesture for canvas
   const bindGesture = useGesture({
-    onDrag: state => {
+    onDrag: (state) => {
       const [x0, y0] = state.previous;
       const [x1, y1] = state.xy;
       const canvas = canvasRef.current!;
@@ -94,9 +91,9 @@ export const PixelCanvas: React.FC<Props> = props => {
         y0: rectY0,
         x1: rectX1,
         y1: rectY1,
-        color: selectedColor
+        color: selectedColor,
       });
-    }
+    },
   });
 
   return (
@@ -127,7 +124,7 @@ const useCanvasRef = (): [
   (node: any) => void
 ] => {
   const ref = useRef<HTMLCanvasElement>();
-  const callback = useCallback(node => {
+  const callback = useCallback((node) => {
     if (node) {
       ref.current = node;
     }

@@ -1,7 +1,7 @@
 import React from "react";
 import "./ColorPalette.css";
-import { useStoreState, useStoreActions } from "easy-peasy";
 import { StoreModel } from "../../store";
+import { useStoreActions, useStoreState } from "../../hooks";
 
 const AddIcon: React.FC = () => {
   return (
@@ -15,13 +15,9 @@ const AddIcon: React.FC = () => {
 };
 
 export const ColorPalette: React.FC = () => {
-  const colors = useStoreState<StoreModel, string[]>(
-    state => state.palette.colors
-  );
+  const colors = useStoreState((state) => state.palette.colors) as string[];
 
-  const selectColor = useStoreActions<StoreModel>(
-    actions => actions.palette.selectColor
-  );
+  const selectColor = useStoreActions((actions) => actions.palette.selectColor);
 
   const handleClick = (index: number) => () => {
     selectColor(index);
@@ -33,7 +29,7 @@ export const ColorPalette: React.FC = () => {
         height: "100%",
         display: "flex",
         flexDirection: "column",
-        alignItems: "center"
+        alignItems: "center",
       }}
     >
       {colors.map((color, i) => (
@@ -43,12 +39,15 @@ export const ColorPalette: React.FC = () => {
           className={"ColorPalette-items ColorPalette-button"}
           style={{
             backgroundColor: color,
-            flex: 1
+            flex: 1,
           }}
         />
       ))}
 
-      <button className={"ColorPalette-items ColorPalette-button"} style={{ minHeight: 48, maxHeight: 48, flex: 0 }}>
+      <button
+        className={"ColorPalette-items ColorPalette-button"}
+        style={{ minHeight: 48, maxHeight: 48, flex: 0 }}
+      >
         <AddIcon />
       </button>
     </div>
