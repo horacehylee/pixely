@@ -22,12 +22,19 @@ export const CanvasArea: React.FC = () => {
     y: 0,
   });
 
+  const [moveXy, setMoveXy] = useState<{ x: number; y: number }>({
+    x: 0,
+    y: 0,
+  });
+  const [pan, setPan] = useState<boolean>(false);
+
   const animatedStyleProps = useAnimatedCanvasProps({
     width,
     height,
     zoom,
     parentDomRect: domRect,
     wheelXy,
+    moveXy,
   });
 
   const handleWheel = (event: React.WheelEvent) => {
@@ -40,10 +47,31 @@ export const CanvasArea: React.FC = () => {
     setWheelXy({ x: event.clientX, y: event.clientY });
   };
 
+  const handleMouseDown = (event: React.MouseEvent) => {
+    if (event.button === 1) {
+      setPan(true);
+    }
+  };
+
+  const handleMouseMove = (event: React.MouseEvent) => {
+    if (pan) {
+      setMoveXy({ x: moveXy.x + event.movementX, y: moveXy.y + event.movementY});
+    }
+  }
+
+  const handleMouseUp = (event: React.MouseEvent) => {
+    if (event.button === 1) {
+      setPan(false);
+    }
+  }
+
   return (
     <div
       ref={ref}
       onWheel={handleWheel}
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
       style={{ width: "100%", height: "100%" }}
     >
       <PixelCanvas animatedStyleProps={animatedStyleProps} />
@@ -65,12 +93,14 @@ const useAnimatedCanvasProps = ({
   zoom,
   parentDomRect,
   wheelXy,
+  moveXy,
 }: {
   width: number;
   height: number;
   zoom: number;
   parentDomRect: DOMRect;
   wheelXy: { x: number; y: number };
+  moveXy: { x: number; y: number };
 }): React.CSSProperties => {
   const [animatedProps, setAnimatedProps] = useSpring(() => {
     return {
@@ -89,7 +119,6 @@ const useAnimatedCanvasProps = ({
 
   const previousZoom = usePrevious(zoom);
 
-  // TODO: enable pan and zoom control offset
   const [animatedOffsetProps, setAnimatedOffsetProps] = useSpring(() => {
     return {
       left: 0,
@@ -159,6 +188,31 @@ const useAnimatedCanvasProps = ({
     parentDomRect,
     wheelXy.x,
     wheelXy.y,
+  ]);
+
+  useEffect(() => {
+    if (!initialized) {
+      return;
+    }
+    const threshold = 10;
+    if (Math.abs(moveXy.x) > threshold || Math.abs(moveXy.y) > threshold) {
+      setCanvasOffset({
+        left: toEven(Math.floor(canvasOffset.left - moveXy.x)),
+        top: toEven(Math.floor(canvasOffset.top - moveXy.y)),
+      });
+      moveXy.x = 0;
+      moveXy.y = 0;
+    }
+  }, [
+    width,
+    height,
+    previousZoom,
+    canvasOffset,
+    zoom,
+    initialized,
+    parentDomRect,
+    moveXy.x,
+    moveXy.y,
   ]);
 
   return { ...animatedProps, ...animatedOffsetProps };

@@ -5,7 +5,7 @@
 - [x] canvas view in center
 
 - [x] mouse wheel zoom in and out
-- [ ] pan with middle mouse button
+- [x] pan with middle mouse button
 - [ ] change cursor based on tool
 
 - [ ] save to png
